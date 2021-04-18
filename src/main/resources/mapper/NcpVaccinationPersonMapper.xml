@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zk.ncp.mapper.NcpVaccinationPersonMapper">
+  <resultMap id="BaseResultMap" type="com.zk.ncp.model.NcpVaccinationPerson">
+    <id column="person_id" jdbcType="INTEGER" property="personId" />
+    <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="nationality_or_region" jdbcType="VARCHAR" property="nationalityOrRegion" />
+    <result column="work_province" jdbcType="VARCHAR" property="workProvince" />
+    <result column="work_city" jdbcType="VARCHAR" property="workCity" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="vaccination_status" jdbcType="VARCHAR" property="vaccinationStatus" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="vaccination_times" jdbcType="INTEGER" property="vaccinationTimes" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="DATE" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    person_id, user_code, user_name, org_id, org_name, nationality_or_region, work_province, 
+    work_city, tel, vaccination_status, reason, vaccination_times, create_user, create_time, 
+    update_user, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ncp_vaccination_person
+    where person_id = #{personId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ncp_vaccination_person
+    where person_id = #{personId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
+    insert into ncp_vaccination_person (person_id, user_code, user_name, 
+      org_id, org_name, nationality_or_region, 
+      work_province, work_city, tel, 
+      vaccination_status, reason, vaccination_times, 
+      create_user, create_time, update_user, 
+      update_time)
+    values (#{personId,jdbcType=INTEGER}, #{userCode,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{nationalityOrRegion,jdbcType=VARCHAR}, 
+      #{workProvince,jdbcType=VARCHAR}, #{workCity,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, 
+      #{vaccinationStatus,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{vaccinationTimes,jdbcType=INTEGER}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=DATE})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
+    insert into ncp_vaccination_person
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        person_id,
+      </if>
+      <if test="userCode != null">
+        user_code,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="orgName != null">
+        org_name,
+      </if>
+      <if test="nationalityOrRegion != null">
+        nationality_or_region,
+      </if>
+      <if test="workProvince != null">
+        work_province,
+      </if>
+      <if test="workCity != null">
+        work_city,
+      </if>
+      <if test="tel != null">
+        tel,
+      </if>
+      <if test="vaccinationStatus != null">
+        vaccination_status,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="vaccinationTimes != null">
+        vaccination_times,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        #{personId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="nationalityOrRegion != null">
+        #{nationalityOrRegion,jdbcType=VARCHAR},
+      </if>
+      <if test="workProvince != null">
+        #{workProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="workCity != null">
+        #{workCity,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="vaccinationStatus != null">
+        #{vaccinationStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="vaccinationTimes != null">
+        #{vaccinationTimes,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
+    update ncp_vaccination_person
+    <set>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="nationalityOrRegion != null">
+        nationality_or_region = #{nationalityOrRegion,jdbcType=VARCHAR},
+      </if>
+      <if test="workProvince != null">
+        work_province = #{workProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="workCity != null">
+        work_city = #{workCity,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="vaccinationStatus != null">
+        vaccination_status = #{vaccinationStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="vaccinationTimes != null">
+        vaccination_times = #{vaccinationTimes,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=DATE},
+      </if>
+    </set>
+    where person_id = #{personId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
+    update ncp_vaccination_person
+    set user_code = #{userCode,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=INTEGER},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      nationality_or_region = #{nationalityOrRegion,jdbcType=VARCHAR},
+      work_province = #{workProvince,jdbcType=VARCHAR},
+      work_city = #{workCity,jdbcType=VARCHAR},
+      tel = #{tel,jdbcType=VARCHAR},
+      vaccination_status = #{vaccinationStatus,jdbcType=VARCHAR},
+      reason = #{reason,jdbcType=VARCHAR},
+      vaccination_times = #{vaccinationTimes,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=DATE}
+    where person_id = #{personId,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteNcpVaccinationPerson">
+    delete from ncp_vaccination_person where person_id = #{personId}
+  </delete>
+
+  <select id="selectNcpVaccinationPersonList" resultType="com.zk.ncp.model.vo.NcpVaccinationPersonVo">
+    select * from ncp_vaccination_person
+  </select>
+
+</mapper>

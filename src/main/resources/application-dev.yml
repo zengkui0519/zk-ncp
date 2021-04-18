@@ -1,0 +1,45 @@
+server:
+  port: 20005
+  servlet:
+    context-path: /ncp
+  ssl:
+    enabled: false
+  endpoint:
+    web:
+      exposure:
+        # 这里用* 代表暴露所有端点只是为了观察效果，实际中按照需进行端点暴露
+        include: "*"
+    health:
+      show-details: always
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:20001/eureka/
+  instance:
+    prefer-ip-address: true #以IP地址注册到服务中心
+    instance-id: ${spring.cloud.client.ip-address}:${server.port} #显示的实例名
+    #Eureka客户端向服务端发送心跳的时间间隔，单位为秒（客户端告诉服务端自己会按照该规则），默认30
+    lease-renewal-interval-in-seconds: 1
+    #Eureka服务端在收到最后一次心跳之后等待的时间上限，单位为秒，超过则剔除（客户端告诉服务端按照此规则等待自己），默认90
+    lease-expiration-duration-in-seconds: 3
+
+    health-check-url: http://${spring.cloud.client.ip-address}:${server.port}${server.servlet.context-path}/actuator/health
+    metadata-map:
+      management:
+        context-path: ${server.servlet.context-path}/actuator
+
+spring:
+  application:
+    name: zk-ncp-service
+  datasource:
+    druid:
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@8.129.124.238:1521:XE
+      username: zk_ncp_dev
+      password: Yang.0519
+
+# MyBatis
+mybatis:
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath*:/mapper/*Mapper.xml,classpath*:/mapper/**/*Mapper.xml

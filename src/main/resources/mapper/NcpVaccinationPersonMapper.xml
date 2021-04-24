@@ -45,7 +45,7 @@
         </collection>
     </resultMap>
 
-    <resultMap id="NcpVaccinationPersonVOMap" type="com.zk.ncp.model.vo.NcpVaccinationPersonVO">
+    <resultMap id="NcpVaccinationPersonVOMap" type="com.zk.ncp.model.vo.NcpVaccinationPersonListVO">
         <id column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
         <result column="USER_CODE" jdbcType="VARCHAR" property="userCode" />
         <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />

@@ -96,34 +96,6 @@ public class NcpVaccinationPersonServiceImpl implements NcpVaccinationPersonServ
     }
 
     @Override
-    public Map<String, Object> saveNcpVaccinationRecord(NcpVaccinationRecordVO recordVO) {
-        List<NcpVaccinationRecordVO> ncpVaccinationRecordList = new ArrayList<>();
-        ncpVaccinationRecordList.add(recordVO);
-
-        Map<String, Object> result = new HashMap<>();
-        if (ncpVaccinationRecordService.saveNcpVaccinationRecordAndDetail(recordVO.getPersonId(), ncpVaccinationRecordList)) {
-            result.put("msg", "SUCCESS");
-            return result;
-        }
-        result.put("msg", "保存人员某种新冠疫苗接种情况失败");
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> saveNcpVaccinationDetail(NcpVaccinationDetail detail) {
-        List<NcpVaccinationDetailVO> detailList = new ArrayList<>();
-        detailList.add((NcpVaccinationDetailVO) detail);
-
-        Map<String, Object> result = new HashMap<>();
-        if (ncpVaccinationDetailService.saveNcpVaccinationDetailList(detail.getRecordId(), detailList)) {
-            result.put("msg", "SUCCESS");
-            return result;
-        }
-        result.put("msg", "保存某种新冠疫苗接种详情失败");
-        return result;
-    }
-
-    @Override
     public boolean deleteNcpVaccinationPerson(Long personId) {
         if (null == personId) {
             logger.info("personId is null");

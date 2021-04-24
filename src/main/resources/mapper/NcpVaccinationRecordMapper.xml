@@ -2,104 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zk.ncp.mapper.NcpVaccinationRecordMapper">
   <resultMap id="BaseResultMap" type="com.zk.ncp.model.NcpVaccinationRecord">
-    <id column="record_id" jdbcType="INTEGER" property="recordId" />
-    <result column="person_id" jdbcType="INTEGER" property="personId" />
-    <result column="vaccination_type" jdbcType="VARCHAR" property="vaccinationType" />
-    <result column="required_times" jdbcType="VARCHAR" property="requiredTimes" />
-    <result column="completion_times" jdbcType="VARCHAR" property="completionTimes" />
-    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <id column="RECORD_ID" jdbcType="DECIMAL" property="recordId" />
+    <result column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
+    <result column="VACCINATION_TYPE" jdbcType="VARCHAR" property="vaccinationType" />
+    <result column="REQUIRED_TIMES" jdbcType="DECIMAL" property="requiredTimes" />
+    <result column="COMPLETION_TIMES" jdbcType="DECIMAL" property="completionTimes" />
+    <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
   </resultMap>
 
-  <sql id="Base_Column_List">
-    record_id, person_id, vaccination_type, required_times, completion_times, create_time
-  </sql>
+  <resultMap id="NcpVaccinationRecordDTOMap" type="com.zk.ncp.model.vo.NcpVaccinationRecordVO">
+    <id column="RECORD_ID" jdbcType="DECIMAL" property="recordId" />
+    <result column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
+    <result column="VACCINATION_TYPE" jdbcType="VARCHAR" property="vaccinationType" />
+    <result column="REQUIRED_TIMES" jdbcType="DECIMAL" property="requiredTimes" />
+    <result column="COMPLETION_TIMES" jdbcType="DECIMAL" property="completionTimes" />
+    <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ncp_vaccination_record
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ncp_vaccination_record
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </delete>
+    <collection property="ncpVaccinationDetailList" ofType="com.zk.ncp.model.vo.NcpVaccinationDetailVO"
+                select="com.crc.ehs.expert.mapper.NcpVaccinationDetailMapper.selectNcpVaccinationDetailList" column="RECORD_ID">
+    </collection>
+  </resultMap>
 
   <insert id="insert" parameterType="com.zk.ncp.model.NcpVaccinationRecord">
-    insert into ncp_vaccination_record (record_id, person_id, vaccination_type, 
+    insert into ncp_vaccination_record (record_id, person_id, vaccination_type,
       required_times, completion_times, create_time
       )
-    values (#{recordId,jdbcType=INTEGER}, #{personId,jdbcType=INTEGER}, #{vaccinationType,jdbcType=VARCHAR}, 
+    values (NCP_VACCINATION_RECORD_SEQ.NEXTVAL, #{personId,jdbcType=INTEGER}, #{vaccinationType,jdbcType=VARCHAR},
       #{requiredTimes,jdbcType=VARCHAR}, #{completionTimes,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}
       )
   </insert>
-
-  <insert id="insertSelective" parameterType="com.zk.ncp.model.NcpVaccinationRecord">
-    insert into ncp_vaccination_record
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="recordId != null">
-        record_id,
-      </if>
-      <if test="personId != null">
-        person_id,
-      </if>
-      <if test="vaccinationType != null">
-        vaccination_type,
-      </if>
-      <if test="requiredTimes != null">
-        required_times,
-      </if>
-      <if test="completionTimes != null">
-        completion_times,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="recordId != null">
-        #{recordId,jdbcType=INTEGER},
-      </if>
-      <if test="personId != null">
-        #{personId,jdbcType=INTEGER},
-      </if>
-      <if test="vaccinationType != null">
-        #{vaccinationType,jdbcType=VARCHAR},
-      </if>
-      <if test="requiredTimes != null">
-        #{requiredTimes,jdbcType=VARCHAR},
-      </if>
-      <if test="completionTimes != null">
-        #{completionTimes,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=DATE},
-      </if>
-    </trim>
-  </insert>
-
-  <update id="updateByPrimaryKeySelective" parameterType="com.zk.ncp.model.NcpVaccinationRecord">
-    update ncp_vaccination_record
-    <set>
-      <if test="personId != null">
-        person_id = #{personId,jdbcType=INTEGER},
-      </if>
-      <if test="vaccinationType != null">
-        vaccination_type = #{vaccinationType,jdbcType=VARCHAR},
-      </if>
-      <if test="requiredTimes != null">
-        required_times = #{requiredTimes,jdbcType=VARCHAR},
-      </if>
-      <if test="completionTimes != null">
-        completion_times = #{completionTimes,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=DATE},
-      </if>
-    </set>
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </update>
 
   <update id="updateByPrimaryKey" parameterType="com.zk.ncp.model.NcpVaccinationRecord">
     update ncp_vaccination_record
@@ -115,9 +50,15 @@
     delete from NCP_VACCINATION_RECORD where PERSON_ID = #{personId}
   </delete>
 
-  <select id="selectNcpVaccinationRecordIdList" resultType="java.lang.Integer">
+  <select id="selectNcpVaccinationRecordIdList" resultType="java.lang.Long">
     select RECORD_ID from NCP_VACCINATION_RECORD
     where PERSON_ID = #{personId}
+  </select>
+
+  <select id="selectNcpVaccinationRecordList" resultMap="NcpVaccinationRecordDTOMap">
+    select * from NCP_VACCINATION_RECORD
+    where PERSON_ID = #{personId}
+    order by record_id
   </select>
 
 </mapper>

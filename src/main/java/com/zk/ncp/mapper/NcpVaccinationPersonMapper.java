@@ -1,24 +1,27 @@
 package com.zk.ncp.mapper;
 
 import com.zk.ncp.model.NcpVaccinationPerson;
-import com.zk.ncp.model.vo.NcpVaccinationPersonVo;
+import com.zk.ncp.model.vo.NcpVaccinationParamsVO;
+import com.zk.ncp.model.vo.NcpVaccinationPersonVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NcpVaccinationPersonMapper {
-    int deleteByPrimaryKey(Integer personId);
 
     int insert(NcpVaccinationPerson record);
 
-    int insertSelective(NcpVaccinationPerson record);
-
-    NcpVaccinationPerson selectByPrimaryKey(Integer personId);
-
-    int updateByPrimaryKeySelective(NcpVaccinationPerson record);
-
     int updateByPrimaryKey(NcpVaccinationPerson record);
 
-    List<NcpVaccinationPersonVo> selectNcpVaccinationPersonList(NcpVaccinationPersonVo personVo);
+    List<NcpVaccinationPersonVO> selectNcpVaccinationPersonList(NcpVaccinationParamsVO paramsVO);
 
-    void deleteNcpVaccinationPerson(Integer personId);
+    void deleteNcpVaccinationPerson(Long personId);
+
+    NcpVaccinationPersonVO selectNcpVaccinationPerson(Map<String, Object> params);
+
+    int selectTheNumberOfVaccinatedPeople(NcpVaccinationParamsVO paramsVO);
 }
+
+
+
+

@@ -2,70 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zk.ncp.mapper.NcpVaccinationDetailMapper">
   <resultMap id="BaseResultMap" type="com.zk.ncp.model.NcpVaccinationDetail">
-    <id column="detail_id" jdbcType="INTEGER" property="detailId" />
-    <result column="record_id" jdbcType="INTEGER" property="recordId" />
-    <result column="person_id" jdbcType="INTEGER" property="personId" />
-    <result column="vaccination_place" jdbcType="VARCHAR" property="vaccinationPlace" />
-    <result column="vaccination_date" jdbcType="DATE" property="vaccinationDate" />
-    <result column="vaccination_province" jdbcType="VARCHAR" property="vaccinationProvince" />
-    <result column="vaccination_city" jdbcType="DATE" property="vaccinationCity" />
+    <id column="DETAIL_ID" jdbcType="DECIMAL" property="detailId" />
+    <result column="RECORD_ID" jdbcType="DECIMAL" property="recordId" />
+    <result column="VACCINATION_PLACE" jdbcType="VARCHAR" property="vaccinationPlace" />
+    <result column="VACCINATION_DATE" jdbcType="TIMESTAMP" property="vaccinationDate" />
+    <result column="VACCINATION_PROVINCE" jdbcType="VARCHAR" property="vaccinationProvince" />
+    <result column="VACCINATION_CITY" jdbcType="VARCHAR" property="vaccinationCity" />
   </resultMap>
 
-  <sql id="Base_Column_List">
-    detail_id, record_id, person_id, vaccination_place, vaccination_date, vaccination_province, 
-    vaccination_city
-  </sql>
-
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ncp_vaccination_detail
-    where detail_id = #{detailId,jdbcType=INTEGER}
-  </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ncp_vaccination_detail
-    where detail_id = #{detailId,jdbcType=INTEGER}
-  </delete>
+  <resultMap id="NcpVaccinationDetailDTOMap" type="com.zk.ncp.model.vo.NcpVaccinationDetailVO">
+    <id column="DETAIL_ID" jdbcType="DECIMAL" property="detailId" />
+    <result column="RECORD_ID" jdbcType="DECIMAL" property="recordId" />
+    <result column="VACCINATION_PLACE" jdbcType="VARCHAR" property="vaccinationPlace" />
+    <result column="VACCINATION_DATE" jdbcType="TIMESTAMP" property="vaccinationDate" />
+    <result column="VACCINATION_PROVINCE" jdbcType="VARCHAR" property="vaccinationProvince" />
+    <result column="VACCINATION_PROVINCE_NAME" jdbcType="VARCHAR" property="vaccinationProvinceName" />
+    <result column="VACCINATION_CITY" jdbcType="VARCHAR" property="vaccinationCity" />
+    <result column="VACCINATION_CITY_NAME" jdbcType="VARCHAR" property="vaccinationCityName" />
+    <result column="SORT" jdbcType="DECIMAL" property="sort" />
+  </resultMap>
 
   <insert id="insert" parameterType="com.zk.ncp.model.NcpVaccinationDetail">
-    insert into ncp_vaccination_detail (detail_id, record_id, person_id, 
-      vaccination_place, vaccination_date, vaccination_province, 
+    insert into ncp_vaccination_detail (detail_id, record_id,
+      vaccination_place, vaccination_date, vaccination_province,
       vaccination_city)
-    values (#{detailId,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{personId,jdbcType=INTEGER}, 
-      #{vaccinationPlace,jdbcType=VARCHAR}, #{vaccinationDate,jdbcType=DATE}, #{vaccinationProvince,jdbcType=VARCHAR}, 
+    values ((NCP_VACCINATION_DETAIL_SEQ.NEXTVAL, #{recordId,jdbcType=INTEGER},
+      #{vaccinationPlace,jdbcType=VARCHAR}, #{vaccinationDate,jdbcType=DATE}, #{vaccinationProvince,jdbcType=VARCHAR},
       #{vaccinationCity,jdbcType=DATE})
   </insert>
-
-  <update id="updateByPrimaryKeySelective" parameterType="com.zk.ncp.model.NcpVaccinationDetail">
-    update ncp_vaccination_detail
-    <set>
-      <if test="recordId != null">
-        record_id = #{recordId,jdbcType=INTEGER},
-      </if>
-      <if test="personId != null">
-        person_id = #{personId,jdbcType=INTEGER},
-      </if>
-      <if test="vaccinationPlace != null">
-        vaccination_place = #{vaccinationPlace,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationDate != null">
-        vaccination_date = #{vaccinationDate,jdbcType=DATE},
-      </if>
-      <if test="vaccinationProvince != null">
-        vaccination_province = #{vaccinationProvince,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationCity != null">
-        vaccination_city = #{vaccinationCity,jdbcType=DATE},
-      </if>
-    </set>
-    where detail_id = #{detailId,jdbcType=INTEGER}
-  </update>
 
   <update id="updateByPrimaryKey" parameterType="com.zk.ncp.model.NcpVaccinationDetail">
     update ncp_vaccination_detail
     set record_id = #{recordId,jdbcType=INTEGER},
-      person_id = #{personId,jdbcType=INTEGER},
       vaccination_place = #{vaccinationPlace,jdbcType=VARCHAR},
       vaccination_date = #{vaccinationDate,jdbcType=DATE},
       vaccination_province = #{vaccinationProvince,jdbcType=VARCHAR},
@@ -74,7 +42,17 @@
   </update>
 
   <delete id="deleteNcpVaccinationDetailsByRecordId">
-    delete from ncp_vaccination_detail where record_id = #{recordId}
+    delete from NCP_VACCINATION_DETAIL where RECORD_ID = #{recordId}
   </delete>
+
+  <select id="selectNcpVaccinationDetailList" resultMap="NcpVaccinationDetailDTOMap">
+    select rownum as sort, t.* from (
+      select detail.*,
+             (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = detail.VACCINATION_PROVINCE) VACCINATION_PROVINCE_NAME,
+             (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = detail.VACCINATION_CITY) VACCINATION_CITY_NAME
+      from NCP_VACCINATION_DETAIL detail
+      where detail.RECORD_ID = #{recordId}
+      order by detail.VACCINATION_DATE) t
+  </select>
 
 </mapper>

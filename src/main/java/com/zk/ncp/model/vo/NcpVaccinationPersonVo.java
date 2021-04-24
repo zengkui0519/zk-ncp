@@ -6,8 +6,14 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class NcpVaccinationPersonVo extends NcpVaccinationPerson {
+public class NcpVaccinationPersonVO extends NcpVaccinationPerson {
 
-    List<NcpVaccinationRecordVo> ncpVaccinationRecordList;
+    List<NcpVaccinationRecordVO> ncpVaccinationRecordList;
+
+    private Long userId;
+
+    private String workProvinceName;
+
+    private String workCityName;
 
 }

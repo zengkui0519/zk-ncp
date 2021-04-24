@@ -1,44 +1,59 @@
 package com.zk.ncp.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-/**
- * @description 新冠疫苗接种情况记录表
- * @author ZengKui
- * @date 2021/04/17 00:02
- */
 @Data
 public class NcpVaccinationRecord {
-    /**
-     * 主键ID
-     */
-    private Integer recordId;
+
+    private Long recordId;
 
     /**
      * 接种人员ID
      */
-    private Integer personId;
+    private Long personId;
 
     /**
-     * 接种疫苗类型：1新冠病毒灭活疫苗（Vero细胞）2重组新冠病毒疫苗（5型腺病毒载体）3重组新冠病毒疫苗（CHO细胞）
+     * 接种疫苗类型：1重组新冠病毒疫苗（5型腺病毒载体）2新冠病毒灭活疫苗（Vero细胞）3重组新冠病毒疫苗（CHO细胞）
      */
     private String vaccinationType;
 
     /**
      * 所选接种疫苗规定的接种次数
      */
-    private String requiredTimes;
+    private Integer requiredTimes;
 
     /**
      * 已完成接种次数
      */
-    private String completionTimes;
+    private Integer completionTimes;
+
+    /**
+     * 接种完成率：0～100，保留小数点后一位
+     */
+    private Double finishRate;
 
     /**
      * 创建时间
      */
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
     private Date createTime;
+
+    /**
+     * 修改时间
+     */
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    private Date modifyTime;
 
 }

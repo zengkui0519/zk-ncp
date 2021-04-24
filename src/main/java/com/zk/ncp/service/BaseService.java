@@ -6,4 +6,5 @@ public interface BaseService {
 
     SysUser getUser(String token);
 
+    SysUser getUserByUserCode(String toUpperCase);
 }

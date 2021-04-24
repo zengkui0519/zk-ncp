@@ -3,8 +3,12 @@ package com.zk.ncp.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.zk.ncp.mapper.NcpVaccinationPersonMapper;
+import com.zk.ncp.model.NcpVaccinationDetail;
 import com.zk.ncp.model.base.SysUser;
-import com.zk.ncp.model.vo.NcpVaccinationPersonVo;
+import com.zk.ncp.model.vo.NcpVaccinationDetailVO;
+import com.zk.ncp.model.vo.NcpVaccinationParamsVO;
+import com.zk.ncp.model.vo.NcpVaccinationPersonVO;
+import com.zk.ncp.model.vo.NcpVaccinationRecordVO;
 import com.zk.ncp.service.NcpVaccinationDetailService;
 import com.zk.ncp.service.NcpVaccinationPersonService;
 import com.zk.ncp.service.NcpVaccinationRecordService;
@@ -15,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -36,9 +37,12 @@ public class NcpVaccinationPersonServiceImpl implements NcpVaccinationPersonServ
     private NcpVaccinationDetailService ncpVaccinationDetailService;
 
     @Override
-    public Map<String, Object> getNcpVaccinationPersonList(SysUser user, NcpVaccinationPersonVo personVo) {
-        Page<Object> page = PageHelper.startPage(1, 20);
-        List<NcpVaccinationPersonVo> dataList = ncpVaccinationPersonMapper.selectNcpVaccinationPersonList(personVo);
+    public Map<String, Object> getNcpVaccinationPersonList(SysUser user, NcpVaccinationParamsVO params) {
+        if (null == params.getOrgId()) {
+            params.setUserId(user.getUserId());
+        }
+        Page<Object> page = PageHelper.startPage(params.getStart(), params.getLimit());
+        List<NcpVaccinationPersonVO> dataList = ncpVaccinationPersonMapper.selectNcpVaccinationPersonList(params);
 
         Map<String, Object> result = new HashMap<>();
         result.put(SysConstants.Public.DATA_LIST, dataList);
@@ -47,34 +51,42 @@ public class NcpVaccinationPersonServiceImpl implements NcpVaccinationPersonServ
     }
 
     @Override
-    public Map<String, Object> saveOrUpdateNcpVaccinationPerson(SysUser user, NcpVaccinationPersonVo personVo) {
+    public int viewTheNumberOfVaccinatedPeople(SysUser user, NcpVaccinationParamsVO params) {
+        if (null == params.getOrgId()) {
+            params.setUserId(user.getUserId());
+        }
+        return ncpVaccinationPersonMapper.selectTheNumberOfVaccinatedPeople(params);
+    }
+
+    @Override
+    public Map<String, Object> saveOrUpdateNcpVaccinationPerson(SysUser user, NcpVaccinationPersonVO personVO) {
         Date now = new Date();
         boolean saveOrUpdateResult;
-        if (null == personVo.getPersonId()) {
-            personVo.setCreateTime(now);
-            personVo.setCreateUser(user.getUserCode());
-            personVo.setUpdateTime(now);
-            personVo.setUpdateUser(user.getUserCode());
+        if (null == personVO.getPersonId()) {
+            personVO.setCreateTime(now);
+            personVO.setCreateUser(user.getUserCode());
+            personVO.setUpdateTime(now);
+            personVO.setUpdateUser(user.getUserCode());
             // 保存人员信息
-            saveOrUpdateResult = ncpVaccinationPersonMapper.insert(personVo) > 0;
+            saveOrUpdateResult = ncpVaccinationPersonMapper.insert(personVO) > 0;
         } else {
-            personVo.setUpdateTime(now);
-            personVo.setUpdateUser(user.getUserCode());
+            personVO.setUpdateTime(now);
+            personVO.setUpdateUser(user.getUserCode());
             // 更新人员信息
-            saveOrUpdateResult = ncpVaccinationPersonMapper.updateByPrimaryKey(personVo) > 0;
+            saveOrUpdateResult = ncpVaccinationPersonMapper.updateByPrimaryKey(personVO) > 0;
         }
 
         Map<String, Object> result = new ConcurrentHashMap<>();
         boolean saveRecordAndDetailResult;
         if (saveOrUpdateResult) {
-            saveRecordAndDetailResult = ncpVaccinationRecordService.saveNcpVaccinationRecordAndDetail(personVo.getPersonId(), personVo.getNcpVaccinationRecordList());
+            saveRecordAndDetailResult = ncpVaccinationRecordService.saveNcpVaccinationRecordAndDetail(personVO.getPersonId(), personVO.getNcpVaccinationRecordList());
         } else {
             result.put("msg", "保存用户基本信息失败");
             return result;
         }
 
         if (saveRecordAndDetailResult) {
-            result.put("personId", personVo.getPersonId());
+            result.put("personId", personVO.getPersonId());
             result.put("msg", "SUCCESS");
             return result;
         }
@@ -84,13 +96,41 @@ public class NcpVaccinationPersonServiceImpl implements NcpVaccinationPersonServ
     }
 
     @Override
-    public boolean deleteNcpVaccinationPerson(Integer personId) {
+    public Map<String, Object> saveNcpVaccinationRecord(NcpVaccinationRecordVO recordVO) {
+        List<NcpVaccinationRecordVO> ncpVaccinationRecordList = new ArrayList<>();
+        ncpVaccinationRecordList.add(recordVO);
+
+        Map<String, Object> result = new HashMap<>();
+        if (ncpVaccinationRecordService.saveNcpVaccinationRecordAndDetail(recordVO.getPersonId(), ncpVaccinationRecordList)) {
+            result.put("msg", "SUCCESS");
+            return result;
+        }
+        result.put("msg", "保存人员某种新冠疫苗接种情况失败");
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> saveNcpVaccinationDetail(NcpVaccinationDetail detail) {
+        List<NcpVaccinationDetailVO> detailList = new ArrayList<>();
+        detailList.add((NcpVaccinationDetailVO) detail);
+
+        Map<String, Object> result = new HashMap<>();
+        if (ncpVaccinationDetailService.saveNcpVaccinationDetailList(detail.getRecordId(), detailList)) {
+            result.put("msg", "SUCCESS");
+            return result;
+        }
+        result.put("msg", "保存某种新冠疫苗接种详情失败");
+        return result;
+    }
+
+    @Override
+    public boolean deleteNcpVaccinationPerson(Long personId) {
         if (null == personId) {
             logger.info("personId is null");
             return false;
         }
 
-        List<Integer> recordIdList = ncpVaccinationRecordService.getNcpVaccinationRecordIdList(personId);
+        List<Long> recordIdList = ncpVaccinationRecordService.getNcpVaccinationRecordIdList(personId);
         if (!CollectionUtils.isEmpty(recordIdList)) {
             ncpVaccinationDetailService.deleteNcpVaccinationDetails(recordIdList);
             ncpVaccinationRecordService.deleteNcpVaccinationRecords(personId);
@@ -98,6 +138,20 @@ public class NcpVaccinationPersonServiceImpl implements NcpVaccinationPersonServ
 
         ncpVaccinationPersonMapper.deleteNcpVaccinationPerson(personId);
         return true;
+    }
+
+    @Override
+    public NcpVaccinationPersonVO getNcpVaccinationPersonByUserCode(String userCode) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userCode", userCode.toUpperCase());
+        return ncpVaccinationPersonMapper.selectNcpVaccinationPerson(params);
+    }
+
+    @Override
+    public NcpVaccinationPersonVO getNcpVaccinationPersonByPersonId(Long personId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("personId", personId);
+        return ncpVaccinationPersonMapper.selectNcpVaccinationPerson(params);
     }
 
 }

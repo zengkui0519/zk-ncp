@@ -1,15 +1,29 @@
 package com.zk.ncp.service;
 
+import com.zk.ncp.model.NcpVaccinationDetail;
 import com.zk.ncp.model.base.SysUser;
-import com.zk.ncp.model.vo.NcpVaccinationPersonVo;
+import com.zk.ncp.model.vo.NcpVaccinationParamsVO;
+import com.zk.ncp.model.vo.NcpVaccinationPersonVO;
+import com.zk.ncp.model.vo.NcpVaccinationRecordVO;
 
 import java.util.Map;
 
 public interface NcpVaccinationPersonService {
 
-    Map<String, Object> getNcpVaccinationPersonList(SysUser user, NcpVaccinationPersonVo personVo);
+    Map<String, Object> getNcpVaccinationPersonList(SysUser user, NcpVaccinationParamsVO params);
 
-    Map<String, Object> saveOrUpdateNcpVaccinationPerson(SysUser user, NcpVaccinationPersonVo personVo);
+    int viewTheNumberOfVaccinatedPeople(SysUser user, NcpVaccinationParamsVO params);
 
-    boolean deleteNcpVaccinationPerson(Integer personId);
+    Map<String, Object> saveOrUpdateNcpVaccinationPerson(SysUser user, NcpVaccinationPersonVO personVO);
+
+    Map<String, Object> saveNcpVaccinationRecord(NcpVaccinationRecordVO recordVO);
+
+    Map<String, Object> saveNcpVaccinationDetail(NcpVaccinationDetail detail);
+
+    boolean deleteNcpVaccinationPerson(Long personId);
+
+    NcpVaccinationPersonVO getNcpVaccinationPersonByUserCode(String userCode);
+
+    NcpVaccinationPersonVO getNcpVaccinationPersonByPersonId(Long personId);
+
 }

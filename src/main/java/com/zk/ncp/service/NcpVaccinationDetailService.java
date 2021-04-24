@@ -1,14 +1,14 @@
 package com.zk.ncp.service;
 
-import com.zk.ncp.model.NcpVaccinationDetail;
+import com.zk.ncp.model.vo.NcpVaccinationDetailVO;
 
 import java.util.List;
 
 public interface NcpVaccinationDetailService {
 
-    boolean saveNcpVaccinationDetailList(Integer recordId, List<NcpVaccinationDetail> ncpVaccinationDetailList);
+    boolean saveNcpVaccinationDetailList(Long recordId, List<NcpVaccinationDetailVO> ncpVaccinationDetailList);
 
-    void deleteNcpVaccinationDetails(List<Integer> recordIdList);
+    void deleteNcpVaccinationDetails(List<Long> recordIdList);
 
-    void deleteNcpVaccinationDetails(Integer recordId);
+    void deleteNcpVaccinationDetails(Long recordId);
 }

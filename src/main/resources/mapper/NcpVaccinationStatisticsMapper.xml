@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zk.ncp.mapper.NcpVaccinationStatisticsMapper">
+    <resultMap id="BaseResultMap" type="com.zk.ncp.model.NcpVaccinationAreaStatistics">
+        <result column="S_ID" jdbcType="DECIMAL" property="sId" />
+        <result column="AREA_ID" jdbcType="DECIMAL" property="areaId" />
+        <result column="VACCINATION_NUM" jdbcType="DECIMAL" property="vaccinationNum" />
+        <result column="FINISH_NUM" jdbcType="DECIMAL" property="finishNum" />
+        <result column="STATISTIC_DATE" jdbcType="VARCHAR" property="statisticDate" />
+    </resultMap>
+
+    <resultMap id="NcpVaccinationAreaStatisticsVOMap" type="com.zk.ncp.model.vo.NcpVaccinationAreaStatisticsVO">
+        <result column="AREA_NAME" jdbcType="DECIMAL" property="areaName" />
+        <result column="VACCINATION_NUM" jdbcType="DECIMAL" property="vaccinationNum" />
+        <result column="FINISH_NUM" jdbcType="DECIMAL" property="finishNum" />
+        <result column="STATISTIC_DATE" jdbcType="VARCHAR" property="statisticDate" />
+    </resultMap>
+
+    <select id="selectAllCityLevelAreaIds" resultMap="BaseResultMap" >
+        select area_id from t_md_area
+        where state = 'A'
+        and type = 2
+        order by type, sort
+    </select>
+
+    <insert id="insertAreaStatisticsList" parameterType="com.zk.ncp.model.NcpVaccinationAreaStatistics">
+        insert into ncp_vaccination_area_statistics
+        (s_id, area_id, vaccination_num, finish_num, statistic_date)
+        select AREA_STATISTICS_SEQ.NEXTVAL, t.* from (
+        <foreach collection="list" item="item" index="index" separator="union all">
+            select
+            #{item.areaId},
+            (select count(*)
+            from ncp_vaccination_person
+            where vaccination_status = '1' and work_city = #{item.areaId}) as vaccination_num,
+            (
+            select count(*)
+            from ncp_vaccination_person
+            where vaccination_status = '1'
+            and work_city = #{item.areaId}
+            and person_id in
+            (select distinct(person_id)
+            from ncp_vaccination_record
+            where required_times <![CDATA[ <=  ]]> completion_times)) as finish_num,
+            to_char(sysdate, 'yyyy-MM-dd') from dual
+        </foreach>
+        ) t
+    </insert>
+    <!-- 查询接种情况 -->
+    <select id="queryVaccinationRecord" parameterType="java.util.Map" resultType="java.util.Map">
+        select to_char(r.person_id) person_id, to_char(p.org_id) org_id,
+               case when r.completion_times <![CDATA[ >=  ]]> 1 then 'true' else 'false' end is_start,
+               case when r.required_times - r.completion_times <![CDATA[ <=  ]]> 0 then 'true' else 'false' end is_finish
+        from ncp_vaccination_record r, ncp_vaccination_person p
+        where r.person_id = p.person_id
+    </select>
+
+    <!-- 清空整个统计表 -->
+    <delete id="deleteAllOrgStatistics" parameterType="java.util.Map">
+        delete from ncp_vaccination_org_statistics s where s.statistic_date = #{statisticDate,jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertOrgStatisticsBatch" parameterType="java.util.Map">
+        insert into ncp_vaccination_org_statistics(
+        s_id ,
+        org_id ,
+        org_name,
+        vaccination_num ,
+        finish_num ,
+        statistic_date,
+        is_report
+        )
+        select org_statistics_seq.nextval, t.* from
+            (<foreach close=")" collection="dataList" item="item" index="index" open="(" separator="union all">
+            select
+            #{item.orgId,jdbcType=VARCHAR},
+            #{item.orgName,jdbcType=VARCHAR},
+            #{item.vaccinationNum,jdbcType=VARCHAR},
+            #{item.finishNum,jdbcType=VARCHAR},
+            #{item.statisticDate,jdbcType=VARCHAR},
+            #{item.isReport,jdbcType=VARCHAR}
+            from dual
+        </foreach>) t
+    </insert>
+
+    <!-- 批量修改数据 -->
+    <update id="updateOrgStatisticsBatch" parameterType="java.util.Map">
+        <foreach item="item" index="index" collection="dataList" open="begin" separator=";" close="; end;">
+            update ncp_vaccination_org_statistics s set
+                   s.vaccination_num = #{item.vaccinationNum,jdbcType=VARCHAR} ,
+                   s.finish_num = #{item.finishNum,jdbcType=VARCHAR},
+                   s.is_report = #{item.isReport,jdbcType=VARCHAR},
+                   s.org_name = #{item.orgName,jdbcType=VARCHAR}
+            where s.org_id = #{item.orgId,jdbcType=VARCHAR}
+              and s.statistic_date = #{item.statisticDate,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+
+    <!-- 查询接种统计结果 -->
+    <select id="queryVaccinationStatistics" parameterType="java.util.Map" resultType="java.util.Map">
+        select s.s_id,
+               to_char(s.org_id) org_id,
+               s.org_name,
+               to_char(s.vaccination_num) vaccination_num,
+               to_char(s.finish_num) finish_num,
+               s.statistic_date,
+               s.is_report
+          from ncp_vaccination_org_statistics s
+         where 1 = 1
+        <if test="orgId != null and orgId != ''">
+            and s.org_id = #{orgId,jdbcType=VARCHAR}
+        </if>
+        <if test="isReport != null and isReport != ''">
+            and s.is_report = #{isReport,jdbcType=VARCHAR}
+        </if>
+        <if test="statisticDate != null and statisticDate != ''">
+            and s.statistic_date = #{statisticDate,jdbcType=VARCHAR}
+        </if>
+        <if test="orgIds != null and orgIds != ''">
+            and s.org_id in (${orgIds})
+        </if>
+        <if test="userOrgIds != null and userOrgIds != ''">
+            and s.org_id in (${userOrgIds})
+        </if>
+
+        <if test="parentOrgId != null and parentOrgId != ''">
+            and exists (select 1 from t_md_orgnization_valid v where v.active_flag = 'Y'
+            and v.org_id = s.org_id and v.par_org_id = #{parentOrgId,jdbcType=VARCHAR})
+        </if>
+
+        order by s.org_id
+    </select>
+
+    <!-- 查询用户信息 -->
+    <select id="queryUserInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        select u.* from t_sm_user u
+        where 1 = 1
+        <if test="userId != null and userId != ''">
+            and u.user_id = #{userId,jdbcType=VARCHAR}
+        </if>
+
+        <if test="userCode != null and userCode != ''">
+            and u.user_code = #{userCode,jdbcType=VARCHAR}
+        </if>
+
+        <if test="orgId != null and orgId != ''">
+            and u.org_id = #{orgId,jdbcType=VARCHAR}
+        </if>
+        order by u.user_id
+    </select>
+
+    <select id="getAllOrgEmployeeNums" resultType="map"   parameterType="java.lang.String">
+         SELECT t2.pId, t2.pName, sum(t1.content) as empNum
+      FROM T_UP_REPORT_DATA t1,
+           (SELECT distinct MO.ORG_ID, MO.ORG_CNAME, MO.PAR_ORG_ID, MO.SEQ_NUM, SO.ORG_ID as pId, SO.ORG_CNAME as pName
+            FROM T_MD_ORGNIZATION MO,
+                 t_md_tree_ref EF,
+                 (SELECT MO.ORG_ID, MO.ORG_CNAME, MO.PAR_ORG_ID, MO.SEQ_NUM
+                  FROM T_MD_ORGNIZATION MO,
+                       t_md_tree_ref EF
+                  WHERE TO_CHAR(MO.EFF_DATE, 'YYYYMM') = TO_CHAR(EF.EFF_DATE, 'YYYYMM')
+                    AND TO_CHAR(MO.EFF_DATE, 'YYYYMM') = TO_CHAR(sysdate, 'YYYYMM')
+             <!--      AND MO.org_type in ('BU', 'GP') -->
+                    AND mo.org_id = ef.child_id
+                    AND EF.PARENT_ID = 1) SO
+            WHERE TO_CHAR(MO.EFF_DATE, 'YYYYMM') = TO_CHAR(EF.EFF_DATE, 'YYYYMM')
+              AND TO_CHAR(MO.EFF_DATE, 'YYYYMM') = TO_CHAR(sysdate, 'YYYYMM')
+              AND mo.org_id = ef.child_id
+              AND EF.PARENT_ID = so.org_id) t2
+      WHERE t1.u_month = -1
+        AND t1.org_id = t2.ORG_ID
+        AND t1.type in ('1', '3')
+        AND t1.module_id = 10381
+        AND t1.u_year = #{year}
+        AND t1.u_quarter = #{quater}
+        AND t1.dex_id = 10106
+      group by t1.dex_id, t2.pId, t2.pName
+      order by t2.pId
+  </select>
+
+    <select id="selectProvinceLevelAreaStatistics" resultMap="NcpVaccinationAreaStatisticsVOMap">
+        (select '合计' as area_name,
+        sum(statistics.vaccination_num) as vaccination_num, sum(statistics.finish_num) as finish_num,
+        statistics.statistic_date
+        from ncp_vaccination_area_statistics statistics
+        where 1 = 1
+        <choose>
+            <when test="statisticDate != null and statisticDate != ''">
+                and statistics.statistic_date = #{statisticDate}
+            </when>
+            <otherwise>
+                and statistics.statistic_date = to_char(sysdate, 'yyyy-MM-dd')
+            </otherwise>
+        </choose>
+        group by statistics.statistic_date)
+
+        union all
+
+        (select (select name from t_md_area where area_id = area.area_pid) as area_name,
+        sum(statistics.vaccination_num) as vaccination_num, sum(statistics.finish_num) as finish_num, statistics.statistic_date
+        from ncp_vaccination_area_statistics statistics, t_md_area area
+        where statistics.area_id = area.area_id
+        <choose>
+            <when test="statisticDate != null and statisticDate != ''">
+                and statistics.statistic_date = #{statisticDate}
+            </when>
+            <otherwise>
+                and statistics.statistic_date = to_char(sysdate, 'yyyy-MM-dd')
+            </otherwise>
+        </choose>
+        group by area.area_pid, statistics.statistic_date)
+    </select>
+
+    <select id="selectCityLevelAreaStatistics" resultMap="NcpVaccinationAreaStatisticsVOMap">
+
+        <if test="workProvince != null and workProvince != ''">
+            (select (select name from t_md_area where area_id = #{workProvince}) as area_name,
+            sum(statistics.vaccination_num) as vaccination_num, sum(statistics.finish_num) as finish_num,
+            statistics.statistic_date
+            from ncp_vaccination_area_statistics statistics
+            where statistics.area_id in (select area_id from t_md_area where area_pid = #{workProvince})
+            <choose>
+                <when test="statisticDate != null and statisticDate != ''">
+                    and statistics.STATISTIC_DATE = #{statisticDate}
+                </when>
+                <otherwise>
+                    and statistics.STATISTIC_DATE = to_char(sysdate, 'yyyy-MM-dd')
+                </otherwise>
+            </choose>
+            group by statistics.statistic_date)
+
+            union all
+        </if>
+
+        (select (select name from t_md_area where area_id = statistics.area_id) as area_name,
+        statistics.vaccination_num, statistics.finish_num, statistics.statistic_date
+        from ncp_vaccination_area_statistics statistics
+        <where>
+            <if test="workProvince != null and workProvince != ''">
+                and statistics.area_id in (select area_id from t_md_area where area_pid = #{workProvince})
+            </if>
+            <if test="workCity != null and workCity != ''">
+                and statistics.area_id = #{workCity}
+            </if>
+            <choose>
+                <when test="statisticDate != null and statisticDate != ''">
+                    and statistics.STATISTIC_DATE = #{statisticDate}
+                </when>
+                <otherwise>
+                    and statistics.STATISTIC_DATE = to_char(sysdate, 'yyyy-MM-dd')
+                </otherwise>
+            </choose>
+        </where>)
+    </select>
+</mapper>

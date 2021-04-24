@@ -2,212 +2,94 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zk.ncp.mapper.NcpVaccinationPersonMapper">
   <resultMap id="BaseResultMap" type="com.zk.ncp.model.NcpVaccinationPerson">
-    <id column="person_id" jdbcType="INTEGER" property="personId" />
-    <result column="user_code" jdbcType="VARCHAR" property="userCode" />
-    <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="org_id" jdbcType="INTEGER" property="orgId" />
-    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
-    <result column="nationality_or_region" jdbcType="VARCHAR" property="nationalityOrRegion" />
-    <result column="work_province" jdbcType="VARCHAR" property="workProvince" />
-    <result column="work_city" jdbcType="VARCHAR" property="workCity" />
-    <result column="tel" jdbcType="VARCHAR" property="tel" />
-    <result column="vaccination_status" jdbcType="VARCHAR" property="vaccinationStatus" />
-    <result column="reason" jdbcType="VARCHAR" property="reason" />
-    <result column="vaccination_times" jdbcType="INTEGER" property="vaccinationTimes" />
-    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-    <result column="create_time" jdbcType="DATE" property="createTime" />
-    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-    <result column="update_time" jdbcType="DATE" property="updateTime" />
+    <id column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
+    <result column="USER_CODE" jdbcType="VARCHAR" property="userCode" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ORG_ID" jdbcType="DECIMAL" property="orgId" />
+    <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="NATIONALITY_OR_REGION" jdbcType="VARCHAR" property="nationalityOrRegion" />
+    <result column="WORK_PROVINCE" jdbcType="VARCHAR" property="workProvince" />
+    <result column="WORK_CITY" jdbcType="VARCHAR" property="workCity" />
+    <result column="TEL" jdbcType="VARCHAR" property="tel" />
+    <result column="VACCINATION_STATUS" jdbcType="VARCHAR" property="vaccinationStatus" />
+    <result column="REASON" jdbcType="VARCHAR" property="reason" />
+    <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="UPDATE_USER" jdbcType="VARCHAR" property="updateUser" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
 
-  <sql id="Base_Column_List">
-    person_id, user_code, user_name, org_id, org_name, nationality_or_region, work_province, 
-    work_city, tel, vaccination_status, reason, vaccination_times, create_user, create_time, 
-    update_user, update_time
-  </sql>
+    <resultMap id="NcpVaccinationPersonDTOMap" type="com.zk.ncp.model.vo.NcpVaccinationPersonVO">
+        <id column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode" />
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+        <result column="ORG_ID" jdbcType="DECIMAL" property="orgId" />
+        <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+        <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+        <result column="NATIONALITY_OR_REGION" jdbcType="VARCHAR" property="nationalityOrRegion" />
+        <result column="WORK_PROVINCE" jdbcType="VARCHAR" property="workProvince" />
+        <result column="WORK_PROVINCE_NAME" jdbcType="VARCHAR" property="workProvinceName" />
+        <result column="WORK_CITY" jdbcType="VARCHAR" property="workCity" />
+        <result column="WORK_CITY_NAME" jdbcType="VARCHAR" property="workCityName" />
+        <result column="TEL" jdbcType="VARCHAR" property="tel" />
+        <result column="VACCINATION_STATUS" jdbcType="VARCHAR" property="vaccinationStatus" />
+        <result column="REASON" jdbcType="VARCHAR" property="reason" />
+        <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_USER" jdbcType="VARCHAR" property="updateUser" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ncp_vaccination_person
-    where person_id = #{personId,jdbcType=INTEGER}
-  </select>
+        <collection property="ncpVaccinationRecordList" ofType="com.zk.ncp.model.vo.NcpVaccinationRecordVO"
+                    select="com.crc.ehs.expert.mapper.NcpVaccinationRecordMapper.selectNcpVaccinationRecordList" column="PERSON_ID">
+        </collection>
+    </resultMap>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ncp_vaccination_person
-    where person_id = #{personId,jdbcType=INTEGER}
-  </delete>
+    <resultMap id="NcpVaccinationPersonVOMap" type="com.zk.ncp.model.vo.NcpVaccinationPersonVO">
+        <id column="PERSON_ID" jdbcType="DECIMAL" property="personId" />
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode" />
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+        <result column="ORG_ID" jdbcType="DECIMAL" property="orgId" />
+        <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+        <result column="NATIONALITY_OR_REGION" jdbcType="VARCHAR" property="nationalityOrRegion" />
+        <result column="WORK_PROVINCE" jdbcType="VARCHAR" property="workProvince" />
+        <result column="WORK_PROVINCE_NAME" jdbcType="VARCHAR" property="workProvinceName" />
+        <result column="WORK_CITY" jdbcType="VARCHAR" property="workCity" />
+        <result column="WORK_CITY_NAME" jdbcType="VARCHAR" property="workCityName" />
+        <result column="TEL" jdbcType="VARCHAR" property="tel" />
+        <result column="VACCINATION_STATUS" jdbcType="VARCHAR" property="vaccinationStatus" />
+        <result column="REASON" jdbcType="VARCHAR" property="reason" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+
+        <result column="RECORD_ID" jdbcType="DECIMAL" property="recordId" />
+        <result column="VACCINATION_TYPE" jdbcType="VARCHAR" property="vaccinationType" />
+        <result column="REQUIRED_TIMES" jdbcType="DECIMAL" property="requiredTimes" />
+        <result column="COMPLETION_TIMES" jdbcType="DECIMAL" property="completionTimes" />
+        <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+
+        <result column="DETAIL_ID" jdbcType="DECIMAL" property="detailId" />
+        <result column="VACCINATION_PLACE" jdbcType="VARCHAR" property="vaccinationPlace" />
+        <result column="VACCINATION_DATE" jdbcType="TIMESTAMP" property="vaccinationDate" />
+        <result column="VACCINATION_PROVINCE" jdbcType="VARCHAR" property="vaccinationProvince" />
+        <result column="VACCINATION_PROVINCE_NAME" jdbcType="VARCHAR" property="vaccinationProvinceName" />
+        <result column="VACCINATION_CITY" jdbcType="VARCHAR" property="vaccinationCity" />
+        <result column="VACCINATION_CITY_NAME" jdbcType="VARCHAR" property="vaccinationCityName" />
+    </resultMap>
 
   <insert id="insert" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
-    insert into ncp_vaccination_person (person_id, user_code, user_name, 
-      org_id, org_name, nationality_or_region, 
-      work_province, work_city, tel, 
-      vaccination_status, reason, vaccination_times, 
-      create_user, create_time, update_user, 
+    insert into ncp_vaccination_person (person_id, user_code, user_name,
+      org_id, org_name, nationality_or_region,
+      work_province, work_city, tel,
+      vaccination_status, reason,
+      create_user, create_time, update_user,
       update_time)
-    values (#{personId,jdbcType=INTEGER}, #{userCode,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
-      #{orgId,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{nationalityOrRegion,jdbcType=VARCHAR}, 
-      #{workProvince,jdbcType=VARCHAR}, #{workCity,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, 
-      #{vaccinationStatus,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{vaccinationTimes,jdbcType=INTEGER}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{updateUser,jdbcType=VARCHAR}, 
+    values (NCP_VACCINATION_PERSON_SEQ.NEXTVAL, #{userCode,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
+      #{orgId,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{nationalityOrRegion,jdbcType=VARCHAR},
+      #{workProvince,jdbcType=VARCHAR}, #{workCity,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR},
+      #{vaccinationStatus,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR},
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{updateUser,jdbcType=VARCHAR},
       #{updateTime,jdbcType=DATE})
   </insert>
-
-  <insert id="insertSelective" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
-    insert into ncp_vaccination_person
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="personId != null">
-        person_id,
-      </if>
-      <if test="userCode != null">
-        user_code,
-      </if>
-      <if test="userName != null">
-        user_name,
-      </if>
-      <if test="orgId != null">
-        org_id,
-      </if>
-      <if test="orgName != null">
-        org_name,
-      </if>
-      <if test="nationalityOrRegion != null">
-        nationality_or_region,
-      </if>
-      <if test="workProvince != null">
-        work_province,
-      </if>
-      <if test="workCity != null">
-        work_city,
-      </if>
-      <if test="tel != null">
-        tel,
-      </if>
-      <if test="vaccinationStatus != null">
-        vaccination_status,
-      </if>
-      <if test="reason != null">
-        reason,
-      </if>
-      <if test="vaccinationTimes != null">
-        vaccination_times,
-      </if>
-      <if test="createUser != null">
-        create_user,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateUser != null">
-        update_user,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="personId != null">
-        #{personId,jdbcType=INTEGER},
-      </if>
-      <if test="userCode != null">
-        #{userCode,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null">
-        #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="orgId != null">
-        #{orgId,jdbcType=INTEGER},
-      </if>
-      <if test="orgName != null">
-        #{orgName,jdbcType=VARCHAR},
-      </if>
-      <if test="nationalityOrRegion != null">
-        #{nationalityOrRegion,jdbcType=VARCHAR},
-      </if>
-      <if test="workProvince != null">
-        #{workProvince,jdbcType=VARCHAR},
-      </if>
-      <if test="workCity != null">
-        #{workCity,jdbcType=VARCHAR},
-      </if>
-      <if test="tel != null">
-        #{tel,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationStatus != null">
-        #{vaccinationStatus,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null">
-        #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationTimes != null">
-        #{vaccinationTimes,jdbcType=INTEGER},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=DATE},
-      </if>
-      <if test="updateUser != null">
-        #{updateUser,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=DATE},
-      </if>
-    </trim>
-  </insert>
-
-  <update id="updateByPrimaryKeySelective" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
-    update ncp_vaccination_person
-    <set>
-      <if test="userCode != null">
-        user_code = #{userCode,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null">
-        user_name = #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="orgId != null">
-        org_id = #{orgId,jdbcType=INTEGER},
-      </if>
-      <if test="orgName != null">
-        org_name = #{orgName,jdbcType=VARCHAR},
-      </if>
-      <if test="nationalityOrRegion != null">
-        nationality_or_region = #{nationalityOrRegion,jdbcType=VARCHAR},
-      </if>
-      <if test="workProvince != null">
-        work_province = #{workProvince,jdbcType=VARCHAR},
-      </if>
-      <if test="workCity != null">
-        work_city = #{workCity,jdbcType=VARCHAR},
-      </if>
-      <if test="tel != null">
-        tel = #{tel,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationStatus != null">
-        vaccination_status = #{vaccinationStatus,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null">
-        reason = #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="vaccinationTimes != null">
-        vaccination_times = #{vaccinationTimes,jdbcType=INTEGER},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=DATE},
-      </if>
-      <if test="updateUser != null">
-        update_user = #{updateUser,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=DATE},
-      </if>
-    </set>
-    where person_id = #{personId,jdbcType=INTEGER}
-  </update>
 
   <update id="updateByPrimaryKey" parameterType="com.zk.ncp.model.NcpVaccinationPerson">
     update ncp_vaccination_person
@@ -221,20 +103,176 @@
       tel = #{tel,jdbcType=VARCHAR},
       vaccination_status = #{vaccinationStatus,jdbcType=VARCHAR},
       reason = #{reason,jdbcType=VARCHAR},
-      vaccination_times = #{vaccinationTimes,jdbcType=INTEGER},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=DATE},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=DATE}
     where person_id = #{personId,jdbcType=INTEGER}
   </update>
 
   <delete id="deleteNcpVaccinationPerson">
-    delete from ncp_vaccination_person where person_id = #{personId}
+    delete from NCP_VACCINATION_PERSON where PERSON_ID = #{personId}
   </delete>
 
-  <select id="selectNcpVaccinationPersonList" resultType="com.zk.ncp.model.vo.NcpVaccinationPersonVo">
-    select * from ncp_vaccination_person
+  <select id="selectNcpVaccinationPersonList" resultMap="NcpVaccinationPersonVOMap">
+    select t.*
+    from (
+          select person.PERSON_ID, person.USER_CODE, person.USER_NAME, person.ORG_ID, person.ORG_NAME, person.NATIONALITY_OR_REGION,
+                 person.WORK_PROVINCE, person.WORK_CITY,
+                 (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = person.WORK_PROVINCE) WORK_PROVINCE_NAME,
+                 (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = person.WORK_CITY) WORK_CITY_NAME,
+                 person.TEL, person.VACCINATION_STATUS, person.REASON, person.UPDATE_TIME,
+                 record.RECORD_ID, record.VACCINATION_TYPE, record.REQUIRED_TIMES, record.COMPLETION_TIMES, record.FINISH_RATE,
+                 detail.DETAIL_ID, detail.VACCINATION_PLACE, detail.VACCINATION_DATE, detail.VACCINATION_PROVINCE, detail.VACCINATION_CITY,
+                 (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = detail.VACCINATION_PROVINCE) VACCINATION_PROVINCE_NAME,
+                 (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = detail.VACCINATION_CITY) VACCINATION_CITY_NAME,
+                 ROW_NUMBER() OVER (PARTITION BY person.PERSON_ID ORDER BY detail.VACCINATION_DATE DESC) rowNo
+          from NCP_VACCINATION_PERSON person
+          left join NCP_VACCINATION_RECORD record on person.PERSON_ID = record.PERSON_ID
+          left join NCP_VACCINATION_DETAIL detail on record.RECORD_ID = detail.RECORD_ID
+        ) t
+    where t.rowNo = 1
+    <if test="userName != null and userName != ''">
+        and t.USER_NAME like concat(concat('%',#{userName}),'%')
+    </if>
+    <if test="nationalityOrRegion != null and nationalityOrRegion != ''">
+        and t.NATIONALITY_OR_REGION = #{nationalityOrRegion}
+    </if>
+    <if test="workProvince != null and workProvince != ''">
+        and t.WORK_PROVINCE = #{workProvince}
+    </if>
+    <if test="workCity != null and workCity != ''">
+        and t.WORK_CITY = #{workCity}
+    </if>
+    <if test="vaccinationStatus != null and vaccinationStatus != ''">
+        and t.VACCINATION_STATUS = #{vaccinationStatus}
+    </if>
+    <if test="vaccinationType != null and vaccinationType != ''">
+        and t.VACCINATION_TYPE = #{vaccinationType}
+    </if>
+    <if test="vaccinationPlace != null and vaccinationPlace != ''">
+        and t.VACCINATION_PLACE = #{vaccinationPlace}
+    </if>
+    <if test="vaccinationProvince != null and vaccinationProvince != ''">
+        and t.VACCINATION_PROVINCE = #{vaccinationProvince}
+    </if>
+    <if test="vaccinationCity != null and vaccinationCity != ''">
+        and t.VACCINATION_CITY = #{vaccinationCity}
+    </if>
+    <if test="reason != null and reason != ''">
+        and t.REASON = #{reason}
+    </if>
+    <if test="finishRate != null and finishRate != ''">
+      and t.FINISH_RATE = #{finishRate}
+    </if>
+    <if test="userId != null">
+      and t.org_id in (
+                        select distinct mo.org_id
+                        from t_md_tree_ref tr,t_md_orgnization mo,t_sm_allow_orgnization ao,t_sm_user_allow ua
+                        where tr.child_id = mo.org_id
+                        and to_char(tr.eff_date,'yyyyMM') = to_char(mo.eff_date,'yyyyMM')
+                        <!-- and mo.active_flag = 'Y' --><!-- 无效的组织也显示-->
+                        and tr.parent_id = ao.org_id
+                        and to_char(tr.eff_date, 'yyyyMM') = to_char(sysdate, 'yyyyMM')
+                        and ao.allow_id = ua.allow_id
+                        and ua.user_id = #{userId}
+                      )
+    </if>
+    <if test="orgId != null">
+      and t.org_id in (
+                        select distinct mo.org_id
+                        from t_md_tree_ref tr,t_md_orgnization mo
+                        where tr.child_id = mo.org_id
+                        and to_char(tr.eff_date,'yyyyMM') = to_char(mo.eff_date,'yyyyMM')
+                        <!-- and mo.active_flag = 'Y' --><!-- 无效的组织也显示-->
+                        and tr.parent_id = #{orgId}
+                        and to_char(tr.eff_date, 'yyyyMM') = to_char(sysdate, 'yyyyMM')
+                      )
+    </if>
+    order by t.UPDATE_TIME desc
+  </select>
+
+  <select id="selectTheNumberOfVaccinatedPeople" resultType="java.lang.Integer">
+      select count(*)
+      from (
+          select person.PERSON_ID, person.USER_CODE, person.USER_NAME, person.ORG_ID, person.ORG_NAME, person.NATIONALITY_OR_REGION,
+              person.WORK_PROVINCE, person.WORK_CITY, person.TEL, person.VACCINATION_STATUS, person.REASON, person.UPDATE_TIME,
+              record.RECORD_ID, record.VACCINATION_TYPE, record.REQUIRED_TIMES, record.COMPLETION_TIMES, record.FINISH_RATE,
+              detail.DETAIL_ID, detail.VACCINATION_PLACE, detail.VACCINATION_DATE, detail.VACCINATION_PROVINCE, detail.VACCINATION_CITY,
+              ROW_NUMBER() OVER (PARTITION BY person.PERSON_ID ORDER BY detail.VACCINATION_DATE DESC) rowNo
+          from NCP_VACCINATION_PERSON person
+          left join NCP_VACCINATION_RECORD record on person.PERSON_ID = record.PERSON_ID
+          left join NCP_VACCINATION_DETAIL detail on record.RECORD_ID = detail.RECORD_ID
+      ) t
+      where t.rowNo = 1
+      and t.VACCINATION_STATUS = '1'
+      <if test="userName != null and userName != ''">
+          and t.USER_NAME like concat(concat('%',#{userName}),'%')
+      </if>
+      <if test="nationalityOrRegion != null and nationalityOrRegion != ''">
+          and t.NATIONALITY_OR_REGION = #{nationalityOrRegion}
+      </if>
+      <if test="workProvince != null and workProvince != ''">
+          and t.WORK_PROVINCE = #{workProvince}
+      </if>
+      <if test="workCity != null and workCity != ''">
+          and t.WORK_CITY = #{workCity}
+      </if>
+      <if test="vaccinationType != null and vaccinationType != ''">
+          and t.VACCINATION_TYPE = #{vaccinationType}
+      </if>
+      <if test="vaccinationPlace != null and vaccinationPlace != ''">
+          and t.VACCINATION_PLACE = #{vaccinationPlace}
+      </if>
+      <if test="vaccinationProvince != null and vaccinationProvince != ''">
+          and t.VACCINATION_PROVINCE = #{vaccinationProvince}
+      </if>
+      <if test="vaccinationCity != null and vaccinationCity != ''">
+          and t.VACCINATION_CITY = #{vaccinationCity}
+      </if>
+      <if test="reason != null and reason != ''">
+          and t.REASON = #{reason}
+      </if>
+      <if test="finishRate != null and finishRate != ''">
+          and t.FINISH_RATE = #{finishRate}
+      </if>
+      <if test="userId != null">
+          and t.org_id in (
+          select distinct mo.org_id
+          from t_md_tree_ref tr,t_md_orgnization mo,t_sm_allow_orgnization ao,t_sm_user_allow ua
+          where tr.child_id = mo.org_id
+          and to_char(tr.eff_date,'yyyyMM') = to_char(mo.eff_date,'yyyyMM')
+          <!-- and mo.active_flag = 'Y' --><!-- 无效的组织也显示-->
+          and tr.parent_id = ao.org_id
+          and to_char(tr.eff_date, 'yyyyMM') = to_char(sysdate, 'yyyyMM')
+          and ao.allow_id = ua.allow_id
+          and ua.user_id = #{userId}
+          )
+      </if>
+      <if test="orgId != null">
+          and t.org_id in (
+          select distinct mo.org_id
+          from t_md_tree_ref tr,t_md_orgnization mo
+          where tr.child_id = mo.org_id
+          and to_char(tr.eff_date,'yyyyMM') = to_char(mo.eff_date,'yyyyMM')
+          <!-- and mo.active_flag = 'Y' --><!-- 无效的组织也显示-->
+          and tr.parent_id = #{orgId}
+          and to_char(tr.eff_date, 'yyyyMM') = to_char(sysdate, 'yyyyMM')
+          )
+      </if>
+  </select>
+
+  <select id="selectNcpVaccinationPerson" resultMap="NcpVaccinationPersonDTOMap">
+    select person.*,
+      (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = person.WORK_PROVINCE) WORK_PROVINCE_NAME,
+      (SELECT NAME FROM T_MD_AREA WHERE AREA_ID = person.WORK_CITY) WORK_CITY_NAME
+    from NCP_VACCINATION_PERSON person
+    <where>
+        <if test="userCode != null and userCode != ''">
+            and upper(person.user_code) = #{userCode}
+        </if>
+        <if test="personId != null and personId != ''">
+            and person.person_id = #{personId}
+        </if>
+    </where>
   </select>
 
 </mapper>

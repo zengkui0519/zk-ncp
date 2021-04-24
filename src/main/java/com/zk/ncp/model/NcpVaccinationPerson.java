@@ -1,20 +1,15 @@
 package com.zk.ncp.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-/**
- * @description 新冠疫苗接种情况人员表
- * @author ZengKui
- * @date 2021/04/17 00:01
- */
 @Data
 public class NcpVaccinationPerson {
-    /**
-     * 主键ID
-     */
-    private Integer personId;
+
+    private Long personId;
 
     /**
      * 用户LDAP
@@ -27,12 +22,17 @@ public class NcpVaccinationPerson {
     private String userName;
 
     /**
-     * 单位ID
+     * EHS系统的单位ID
      */
-    private Integer orgId;
+    private Long orgId;
 
     /**
-     * 单位名称
+     * HR系统的组织编码
+     */
+    private String orgCode;
+
+    /**
+     * EHS组织单位名称
      */
     private String orgName;
 
@@ -57,7 +57,7 @@ public class NcpVaccinationPerson {
     private String tel;
 
     /**
-     * 接种状态：0未接种、1已接种、2完成接种
+     * 接种状态：0未接种、1已接种
      */
     private String vaccinationStatus;
 
@@ -67,11 +67,6 @@ public class NcpVaccinationPerson {
     private String reason;
 
     /**
-     * 接种次数（后续扩展字段，体内抗体消失后再次接种使用，也可能接种多种疫苗）
-     */
-    private Integer vaccinationTimes;
-
-    /**
      * 创建人
      */
     private String createUser;
@@ -79,6 +74,11 @@ public class NcpVaccinationPerson {
     /**
      * 创建时间
      */
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
     private Date createTime;
 
     /**
@@ -89,6 +89,11 @@ public class NcpVaccinationPerson {
     /**
      * 修改时间
      */
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
     private Date updateTime;
 
 }
